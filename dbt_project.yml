@@ -1,0 +1,31 @@
+name: reconciliation
+version: "1.0"
+config-version: 2
+
+profile: reconciliation
+
+model-paths: ["dbt/models"]
+test-paths: ["dbt/tests"]
+seed-paths: ["dbt/seeds"]
+macro-paths: ["dbt/macros"]
+snapshot-paths: ["dbt/snapshots"]
+analysis-paths: ["dbt/analyses"]
+
+target-path: "dbt/target"
+clean-targets:
+  - "dbt/target"
+  - "dbt/dbt_packages"
+
+models:
+  reconciliation:
+    staging:
+      +materialized: view
+      +schema: silver
+
+    intermediate:
+      +materialized: table
+      +schema: silver
+
+    marts:
+      +materialized: table
+      +schema: gold
