@@ -1,10 +1,20 @@
-"""Reads a PMS export file from disk into a raw pandas DataFrame — no parsing
-or type conversion here, just getting the file's rows into memory."""
-
+from src.utils.config import PMS
 import pandas as pd
+import numpy as np
+
+#------------------------------------------
+#                PMS READER
+#------------------------------------------
+
+frames = []
+
+pms_files = PMS.glob("*.csv")
+
+for file in pms_files:
+    df = pd.read_csv(file, sep=";")
+    frames.append(df)
+
+df = pd.concat(frames, ignore_index=True)
+    
 
 
-def read_pms_export(file_path: str) -> pd.DataFrame:
-    """Read a PMS CSV export. Encoding and delimiter are source-specific
-    quirks handled here, not assumed by the caller."""
-    raise NotImplementedError
