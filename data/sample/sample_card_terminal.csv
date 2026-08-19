@@ -1,0 +1,4 @@
+transaction_ref,transaction_date,amount,currency,extraction_confidence
+TPA-9001,2026-01-05,120.00,EUR,0.98
+TPA-9002,2026-01-06,240.00,EUR,0.95
+TPA-9003,2026-01-06,60.00,EUR,0.62

@@ -1,0 +1,6 @@
+transaction_ref,transaction_date,amount,currency,payment_method
+PMS-000101,2026-01-05,120.00,EUR,card
+PMS-000102,2026-01-05,85.50,EUR,cash
+PMS-000103,2026-01-06,240.00,EUR,card
+PMS-000104,2026-01-06,60.00,EUR,card
+PMS-000105,2026-01-07,150.00,EUR,cash
