@@ -1,0 +1,15 @@
+version: 2
+
+models:
+  - name: int_revenue
+    description: Union of all four staging models onto one comparable shape.
+  - name: int_card_payments
+    description: Card terminal transactions, ready to match against PMS.
+  - name: int_cash_payments
+    description: Cash register transactions, ready to match against PMS.
+  - name: int_reconciliation
+    description: >
+      Applies the matching keys and tolerance from docs/reconciliation_rules.md
+      across all four sources. The `reconciliation_tolerance` var (defined in
+      dbt_project.yml) is the single source of truth for the amount-comparison
+      tolerance — see docs/reconciliation_rules.md, "Tolerance, not exactness".

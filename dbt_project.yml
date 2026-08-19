@@ -29,3 +29,8 @@ models:
     marts:
       +materialized: table
       +schema: gold
+
+vars:
+  # Single source of truth for the amount-comparison tolerance — see
+  # docs/reconciliation_rules.md, "Tolerance, not exactness".
+  reconciliation_tolerance: 0.05

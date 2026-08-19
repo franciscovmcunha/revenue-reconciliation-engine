@@ -1,0 +1,38 @@
+version: 2
+
+models:
+  - name: stg_pms
+    description: >
+      PMS bronze rows typed and renamed onto the canonical field set
+      (docs/data_dictionary.md). One row per billed transaction.
+    columns:
+      - name: transaction_ref
+        tests: [not_null]
+      - name: amount
+        tests: [not_null]
+
+  - name: stg_cash_register
+    description: >
+      Cash register bronze rows typed and renamed onto the canonical field
+      set. One row per recorded cash transaction.
+    columns:
+      - name: amount
+        tests: [not_null]
+
+  - name: stg_card_terminal
+    description: >
+      Card terminal (TPA) bronze rows, extracted via Azure AI Document
+      Intelligence, typed and renamed onto the canonical field set.
+    columns:
+      - name: amount
+        tests: [not_null]
+      - name: extraction_confidence
+        tests: [not_null]
+
+  - name: stg_municipal_tax
+    description: >
+      Municipal tourist tax (TTM) bronze rows — period rollups, not
+      individual transactions. Extracted via Azure AI Document Intelligence.
+    columns:
+      - name: amount
+        tests: [not_null]

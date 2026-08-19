@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: dim_payment_method
+    description: Dimension of distinct payment methods observed across sources.
+  - name: fact_reconciliation
+    description: >
+      One row per comparison outcome (matched/mismatch/missing) — the primary
+      table this whole project produces. See docs/reconciliation_rules.md.
+    columns:
+      - name: outcome
+        tests:
+          - accepted_values:
+              values: ["matched", "mismatch", "missing"]
+  - name: fact_payment_exceptions
+    description: Mismatches only, with both sides' values side by side for review.
+  - name: fact_missing_transactions
+    description: Transactions present in one source and absent where expected.
