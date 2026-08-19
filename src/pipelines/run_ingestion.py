@@ -1,27 +1,14 @@
-from src.database.create_schema import create_schemas
-from src.database.load_to_postgres import load_dataframe
+"""Entry point that runs all four source pipelines into bronze for one
+ingestion run. Each source's failure is isolated — one source failing does
+not prevent the other three from loading.
+"""
 
-from src.parsers.pms.pipeline import run
 
-
-def main():
-
-    print("Creating database schemas...")
-
-    create_schemas()
-
-    print("Running PMS pipeline...")
-
-    pms_df = run()
-
-    load_dataframe(
-        dataframe=pms_df,
-        schema="bronze",
-        table="pms",
-        if_exists="replace"
-    )
-
-    print("Done.")
+def main() -> None:
+    """Generate an ingestion_run_id, run pms/cash_register/card_terminal/
+    municipal_tax pipelines against data/raw/, and print a per-source summary
+    (rows processed/rejected/low-confidence — see docs/data_quality.md)."""
+    raise NotImplementedError
 
 
 if __name__ == "__main__":
