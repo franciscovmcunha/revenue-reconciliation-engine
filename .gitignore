@@ -5,7 +5,12 @@ target/
 dbt_packages/
 logs/
 .DS_Store
-.env.example
-data/raw
+.env
+!.env.example
+
+# Ignore ONLY raw source data — never committed, local-only
+data/raw/*
+!data/raw/.gitkeep
+
 dbt/profiles.yml
 dbt/.user.yml
