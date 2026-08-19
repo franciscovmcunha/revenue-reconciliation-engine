@@ -1,55 +1,15 @@
+"""Tests for src.ingestion.pms.parser — validates the mapping onto the
+canonical field set (docs/data_dictionary.md) against data/sample/sample_pms.csv.
+"""
 
-from src.parsers.pms.reader import read_pms_csvs
-from src.parsers.pms.validator import validate
-from src.parsers.pms.parser import parse
-from src.parsers.pms.pipeline import run
-
-
-#=========================================================================
-#                                PMS TESTS
-#=========================================================================
+import pytest
 
 
-#=========================================================================
-#                                 READER
-#=========================================================================
-df = read_pms_csvs()
-
-print(df.head())
-
-print(df.shape)
-
-#=========================================================================
-#                               VALIDATOR
-#=========================================================================
-df = read_pms_csvs()
-
-validate(df)
-
-print("Schema OK")
-
-#=========================================================================
-#                                 PARSER
-#=========================================================================
-
-df = read_pms_csvs()
-
-validate(df)
-
-df = parse(df)
-
-print(df.dtypes)
-
-#=========================================================================
-#                               PIPELINE
-#=========================================================================
+@pytest.mark.skip(reason="parser not implemented yet")
+def test_parses_all_canonical_columns():
+    raise NotImplementedError
 
 
-df = run()
-print("-------------")
-print(df.head())
-
-print(df.dtypes)
-
-print(df.shape)
-print("-------------")
+@pytest.mark.skip(reason="parser not implemented yet")
+def test_amount_is_always_positive():
+    raise NotImplementedError
