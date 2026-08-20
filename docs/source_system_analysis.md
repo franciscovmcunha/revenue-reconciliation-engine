@@ -18,25 +18,48 @@ assuming a fixed header contract.
 
 ## Card terminal reports (scanned, TPA)
 
-A printed settlement report per terminal per day, scanned to PDF or photographed.
-There is no structured export at all — Azure AI Document Intelligence extracts the
-transaction table from the scan, and what comes back needs the same validation any
-OCR-derived data needs: a wrong digit read from a scan looks exactly like a valid
-transaction unless it's cross-checked against something else (in this case, the PMS
-and cash register totals for the same day).
+A small printed terminal slip per day, scanned or photographed — **not a
+transaction list**. Confirmed by opening the real files: each slip shows only
+day-level totals (`Pagamento`/`Devolução`/`Pay by Link`/`Saldo`, each a count
++ a euro total), never individual card transactions. A single scanned file
+can also hold more than one day's slip — `Relatório TPA 9_10_11.pdf` is three
+independent slips (09/04, 10/04, 11/04) photographed on one page, not a
+combined 3-day report. There's no table here for a layout model to segment,
+so extraction uses Azure AI Document Intelligence's `prebuilt-read` (plain
+OCR text) and a regex against the slip's fixed labels — see
+[`decisions/0002-document-intelligence-for-scanned-sources.md`](decisions/0002-document-intelligence-for-scanned-sources.md).
+Because there's no per-field confidence score from `prebuilt-read`, validity
+is checked against the slip's own arithmetic
+(`Pagamento − Devolução == Saldo`) instead.
 
-## Municipal tax reports (scanned, TTM)
+## Municipal tax (TTM) — corrected: not a fourth source
 
-A periodic report, also arriving as a scanned document, aggregating accommodation and
-bar revenue for tax declaration purposes. Unlike the other three sources, this one is
-already a rollup rather than a transaction list — it reconciles against the *sum* of
-the other sources for the period, not against individual transactions.
+Originally assumed to be a scanned periodic rollup report. It isn't, for
+this reconciliation window — confirmed by opening the real
+`cash_register` and `pms` files together, and by a real cross-check against
+the hotel's own operational knowledge of how TTM is actually handled:
+
+- **Paid in cash**: shows up as a tagged row inside `cash_register`'s own
+  daily sheets (`Descrição` like `TTM #12`), sometimes with a
+  `Documento / Nº Factura` that matches a real PMS `Documento Nº` exactly —
+  confirmed for two real cases (`320/FCT26`, `550/FCT26`).
+- **Paid any other way**: folded into the PMS stay invoice's total, with no
+  separately extractable line anywhere. Only 15 of 618 real PMS invoices in
+  this dataset are cash at all — the rest of TTM is genuinely invisible as
+  a separate figure, and this project doesn't invent one.
+- **The "TTM Alfama" rows**: a real, expected exception, not a data error —
+  only this property has a safe on-site, so a sister property's cash TTM
+  gets deposited here for physical cash-custody reasons and belongs to a
+  PMS export this repo doesn't have. See `reconciliation_rules.md`.
+
+There is no `municipal_tax` ingestion pipeline as a result — see
+`architecture.md`.
 
 ## What this means for ingestion
 
-Two sources need a validator built around "does this row look like a plausible
-transaction" (PMS, cash register); two need a validator built around "does this
-extracted field look like what OCR is likely to get wrong" (card terminal, municipal
-tax). Both eventually produce the same normalized shape — see
-[`data_dictionary.md`](data_dictionary.md) — but the checks that get them there are
-different by necessity, not by accident.
+PMS and cash register both need a validator built around "does this row
+look like a plausible transaction." Card terminal needs one built around
+"does this slip's own arithmetic check out," since there's no per-field
+confidence score to lean on. All three produce the same normalized shape —
+see [`data_dictionary.md`](data_dictionary.md) — but the checks that get them
+there differ by necessity, not by accident.

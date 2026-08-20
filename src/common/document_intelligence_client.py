@@ -1,5 +1,5 @@
-"""Thin wrapper over the Azure AI Document Intelligence SDK, shared by every
-ingestion path that reads from a scanned document (card_terminal, municipal_tax).
+"""Thin wrapper over the Azure AI Document Intelligence SDK, used by the one
+ingestion path that reads from a scanned document: card_terminal.
 
 Responsible for: authenticating against the configured endpoint/key, submitting
 a document for analysis, and returning the extracted fields with their
@@ -35,6 +35,8 @@ class DocumentIntelligenceClient:
 
     def analyze_document(self, file_path: str, model_id: str) -> ExtractionResult:
         """Submit `file_path` for analysis against `model_id` and return the
-        extracted fields. `model_id` differs between card_terminal and
-        municipal_tax — each extractor passes its own."""
+        extracted fields. `model_id` is passed in, not hardcoded here —
+        card_terminal's real slips have no table to segment, so this is
+        called with `"prebuilt-read"` (plain OCR text), not a layout/form
+        model — see docs/decisions/0002-document-intelligence-for-scanned-sources.md."""
         raise NotImplementedError

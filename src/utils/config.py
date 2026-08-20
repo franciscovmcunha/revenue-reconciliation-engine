@@ -16,7 +16,11 @@ CASH_REGISTER = RAW_DATA / "cash_register"
 
 PAYBYRD = RAW_DATA / "paybyrd"
 
-PMS = RAW_DATA / "cash_register"
+PMS = RAW_DATA / "pms"
+
+# No MUNICIPAL_TAX path — municipal tax isn't a separate source for this
+# reconciliation window. See docs/source_system_analysis.md, "Municipal tax
+# (TTM)" for why: it's a derived check inside cash_register's own data.
 
 #------------------------------------------
 #                  AZURE

@@ -1,32 +1,36 @@
 # Architecture
 
-## Four sources, two ingestion mechanisms
+## Three sources, two ingestion mechanisms — municipal tax is not a fourth
 
 | Source | Format | Ingestion path |
 |---|---|---|
 | PMS | CSV export | pandas — direct parse |
 | Cash register | Excel workbook | pandas — direct parse |
-| Card terminal (TPA) | Scanned receipt (PDF/image) | Azure AI Document Intelligence → structured fields |
-| Municipal tax (TTM) | Scanned PDF report | Azure AI Document Intelligence → structured fields |
+| Card terminal (TPA) | Scanned receipt (PDF/photo) | Azure AI Document Intelligence (`prebuilt-read`) → OCR text → regex |
 
-The two structured sources and the two scanned sources end up in the same shape by the
-time they reach bronze — the split exists only at ingestion, never downstream of it.
+Municipal tax (TTM) turned out, on inspecting the real files, not to be a
+separate document at all for this reconciliation window: when a guest pays
+TTM in cash, it's a tagged row inside `cash_register`'s own daily sheets
+(`Descrição` containing `TTM #<room>`); when paid any other way, it's folded
+into the PMS stay invoice with no separately extractable line anywhere. See
+`docs/source_system_analysis.md`, "Municipal tax (TTM)" for the full
+correction and the evidence behind it.
 
 ## Layout
 
 ```
 src/
 ├── common/
-│   ├── document_intelligence_client.py   # thin wrapper over the Azure SDK client
+│   ├── document_intelligence_client.py   # thin wrapper over the Azure SDK client — card_terminal only
 │   ├── normalization.py                  # shared date/monetary normalization (NumPy)
 │   └── db.py                             # PostgreSQL connection + bronze load helpers
 ├── ingestion/
 │   ├── pms/              # reader → parser → validator → pipeline
 │   ├── cash_register/    # reader → parser → validator → pipeline
-│   ├── card_terminal/    # reader → extractor (Document Intelligence) → validator → pipeline
-│   └── municipal_tax/    # reader → extractor (Document Intelligence) → validator → pipeline
+│   │                     #   parser.py also tags TTM-cash rows (see reconciliation_rules.md)
+│   └── card_terminal/    # reader → extractor (Document Intelligence) → validator → pipeline
 └── pipelines/
-    ├── run_ingestion.py       # runs all four source pipelines into bronze
+    ├── run_ingestion.py       # runs all three source pipelines into bronze
     └── run_reconciliation.py  # triggers dbt after bronze is loaded
 ```
 
