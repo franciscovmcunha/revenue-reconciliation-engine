@@ -2,7 +2,7 @@
 
 ## Validation happens per source, before anything is compared
 
-Each of the four ingestion pipelines validates its own rows before they reach bronze —
+Each of the three ingestion pipelines validates its own rows before they reach bronze —
 plausible date ranges, non-negative amounts, a resolvable `source_system` — so a
 malformed row from one source can never masquerade as a legitimate "missing
 transaction" in another. A row that fails validation is logged and excluded, never

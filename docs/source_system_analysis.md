@@ -3,7 +3,7 @@
 ## PMS export (CSV)
 
 One row per billed transaction: a reference, a date, a room or folio identifier, a
-description, and an amount. The most reliably structured of the four sources, but the
+description, and an amount. The most reliably structured of the three sources, but the
 one most exposed to manual entry — a rebooked or corrected charge can appear as two
 rows instead of one, which the ingestion validator has to be able to catch (see
 [`data_quality.md`](data_quality.md)).

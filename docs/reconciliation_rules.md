@@ -5,8 +5,8 @@
 Every comparison between sources resolves to exactly one of three outcomes — kept
 deliberately simple so the exception list stays something a human can act on:
 
-- **Matched** — the same transaction (or, for the municipal tax rollup, the same
-  period total) appears across the expected sources within tolerance.
+- **Matched** — the same transaction (or, for a tagged TTM cash payment, the
+  same date + amount) appears across the expected sources within tolerance.
 - **Mismatch** — the transaction exists in more than one source, but the amount or
   date disagrees beyond tolerance.
 - **Missing** — the transaction exists in one source and not in another where it was
