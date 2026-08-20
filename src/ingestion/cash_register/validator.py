@@ -1,10 +1,10 @@
-"""Validates parsed cash register rows before they reach bronze — see
-docs/data_quality.md.
-"""
-
 import pandas as pd
 from dataclasses import dataclass
 
+
+#------------------------------------------
+#         CASH REGISTER VALIDATOR
+#------------------------------------------
 
 @dataclass
 class ValidationResult:
@@ -14,6 +14,12 @@ class ValidationResult:
 
 
 def validate_cash_register_rows(parsed: pd.DataFrame) -> ValidationResult:
-    """Check plausible date ranges and non-negative amounts; exclude summary
-    rows that were misread as transaction rows."""
-    raise NotImplementedError
+    reasons: dict[int, str] = {}
+    bad_amount = parsed["amount"].isna() | (parsed["amount"] < 0)
+    bad_date = parsed["transaction_date"].isna()
+    for idx in parsed.index[bad_amount]:
+        reasons[idx] = "invalid_amount"
+    for idx in parsed.index[bad_date]:
+        reasons.setdefault(idx, "invalid_date")
+    bad = bad_amount | bad_date
+    return ValidationResult(parsed[~bad].copy(), parsed[bad].copy(), reasons)
