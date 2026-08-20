@@ -1,9 +1,9 @@
-"""Locates and hands off scanned card terminal (TPA) receipt files — no
-extraction here, that's extractor.py's job via Document Intelligence.
-"""
+from pathlib import Path
+
+#------------------------------------------
+#          CARD TERMINAL READER
+#------------------------------------------
 
 
 def list_pending_receipts(directory: str) -> list[str]:
-    """Return file paths for receipts (PDF/image) not yet processed in this
-    ingestion run."""
-    raise NotImplementedError
+    return sorted(str(p) for p in Path(directory).glob("*/*.pdf"))  # one subfolder per month

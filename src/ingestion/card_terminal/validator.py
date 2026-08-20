@@ -1,8 +1,9 @@
-"""Validates extracted card terminal rows — see docs/data_quality.md on
-OCR-specific validation (the extraction_confidence threshold)."""
-
 import pandas as pd
 from dataclasses import dataclass
+
+#------------------------------------------
+#         CARD TERMINAL VALIDATOR
+#------------------------------------------
 
 
 @dataclass
@@ -12,10 +13,23 @@ class ValidationResult:
     rejected_rows: pd.DataFrame
 
 
-LOW_CONFIDENCE_THRESHOLD = 0.0  # placeholder — see docs/data_quality.md
+LOW_CONFIDENCE_THRESHOLD = 0.01
+
+
+def _parse_slip_amount(raw: pd.Series) -> pd.Series:
+    # this source's format is "2 326,15" — space as thousands, comma as
+    # decimal — the reverse convention from the PMS export
+    cleaned = raw.astype(str).str.replace(" ", "", regex=False).str.replace(",", ".", regex=False)
+    return pd.to_numeric(cleaned, errors="coerce")
 
 
 def validate_card_terminal_rows(extracted: pd.DataFrame) -> ValidationResult:
-    """Split rows into valid, low-confidence (flagged, not corrected), and
-    rejected (implausible even before comparing against other sources)."""
-    raise NotImplementedError
+    if extracted.empty:
+        return ValidationResult(extracted, extracted, extracted)
+    for col in ("amount", "refund_amount", "saldo_amount"):
+        extracted[col] = _parse_slip_amount(extracted[col])
+    missing = extracted[["amount", "refund_amount", "saldo_amount"]].isna().any(axis=1)
+    consistent = (extracted["amount"] - extracted["refund_amount"] - extracted["saldo_amount"]).abs() <= LOW_CONFIDENCE_THRESHOLD
+    valid = ~missing & consistent
+    low_confidence = ~missing & ~consistent
+    return ValidationResult(extracted[valid].copy(), extracted[low_confidence].copy(), extracted[missing].copy())
