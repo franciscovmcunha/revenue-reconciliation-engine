@@ -1,12 +1,16 @@
 .venv/
 __pycache__/
 *.pyc
+*.egg-info/
 target/
 dbt_packages/
 logs/
 .DS_Store
 .env
 !.env.example
+
+# Editor scratch files (VS Code Code Runner extension)
+tempCodeRunnerFile.py
 
 # Ignore ONLY raw source data — never committed, local-only
 data/raw/*
