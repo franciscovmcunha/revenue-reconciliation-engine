@@ -1,13 +1,6 @@
-"""Thin wrapper over the Azure AI Document Intelligence SDK, used by the one
-ingestion path that reads from a scanned document: card_terminal.
-
-Responsible for: authenticating against the configured endpoint/key, submitting
-a document for analysis, and returning the extracted fields with their
-per-field confidence score — nothing source-specific belongs here, that lives
-in each source's own `extractor.py`.
-"""
-
 from dataclasses import dataclass
+from azure.ai.documentintelligence import DocumentIntelligenceClient as _AzureClient
+from azure.core.credentials import AzureKeyCredential
 
 
 @dataclass
@@ -24,19 +17,12 @@ class ExtractionResult:
 
 
 class DocumentIntelligenceClient:
-    """Wraps `azure.ai.documentintelligence.DocumentIntelligenceClient`.
-
-    Configuration (endpoint, API key) is read from environment variables —
-    see `.env.example`. Never hardcode credentials here.
-    """
-
     def __init__(self, endpoint: str, api_key: str) -> None:
-        raise NotImplementedError
+        self._client = _AzureClient(endpoint=endpoint, credential=AzureKeyCredential(api_key))
 
     def analyze_document(self, file_path: str, model_id: str) -> ExtractionResult:
-        """Submit `file_path` for analysis against `model_id` and return the
-        extracted fields. `model_id` is passed in, not hardcoded here —
-        card_terminal's real slips have no table to segment, so this is
-        called with `"prebuilt-read"` (plain OCR text), not a layout/form
-        model — see docs/decisions/0002-document-intelligence-for-scanned-sources.md."""
-        raise NotImplementedError
+        with open(file_path, "rb") as f:
+            poller = self._client.begin_analyze_document(model_id, f)
+        result = poller.result()
+        fields = [ExtractedField(name="content", value=result.content, confidence=1.0)]
+        return ExtractionResult(fields=fields, raw_response=result.as_dict())

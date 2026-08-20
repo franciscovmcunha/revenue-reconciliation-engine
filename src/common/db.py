@@ -1,19 +1,29 @@
-"""PostgreSQL connection and bronze-load helpers shared by all four ingestion
-pipelines. Connection details are read from environment variables — see
-.env.example — never hardcoded.
-"""
-
 import pandas as pd
+from sqlalchemy import create_engine
+from src.utils.config import (DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD)
 
+_engine = None
+
+
+#------------------------------------------
+#         POSTGRESQL CONNECTION
+#------------------------------------------
 
 def get_connection():
-    """Return a psycopg2/SQLAlchemy connection using env-configured credentials."""
-    raise NotImplementedError
+    global _engine
+    if _engine is None:
+        url = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+        _engine = create_engine(url)
+    return _engine
 
+#------------------------------------------
+#         LOAD BRONZE LAYER
+#------------------------------------------
 
 def load_to_bronze(df: pd.DataFrame, source_system: str, ingestion_run_id: str) -> int:
-    """Append `df` to the bronze table, tagging every row with `source_system`
-    and `ingestion_run_id`. Returns the number of rows written. Never
-    truncates or overwrites — bronze is append-only, see
-    docs/decisions/0001-preserve-raw-before-normalizing.md."""
-    raise NotImplementedError
+    df = df.copy()
+    df["source_system"] = source_system
+    df["ingestion_run_id"] = ingestion_run_id
+    df.to_sql(source_system, con=get_connection(), schema="bronze", if_exists="append", index=False)
+    return len(df)
+
