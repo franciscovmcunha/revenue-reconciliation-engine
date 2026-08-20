@@ -6,15 +6,10 @@ import numpy as np
 #                PMS READER
 #------------------------------------------
 
-frames = []
 
 pms_files = PMS.glob("*.csv")
 
-for file in pms_files:
-    df = pd.read_csv(file, sep=";")
-    frames.append(df)
-
-df = pd.concat(frames, ignore_index=True)
+def read_pms_export() -> pd.DataFrame:
+        frames = [pd.read_csv(file, sep=";", encoding="utf-8-sig") for file in pms_files]
+        return pd.concat(frames, ignore_index=True)
     
-
-
