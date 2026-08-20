@@ -4,11 +4,10 @@ sources:
   - name: bronze
     schema: bronze
     description: >
-      Raw, as-loaded rows from each of the four ingestion pipelines — see
+      Raw, as-loaded rows from each of the three ingestion pipelines — see
       docs/decisions/0001-preserve-raw-before-normalizing.md for why this
       layer is never overwritten.
     tables:
       - name: pms
       - name: cash_register
       - name: card_terminal
-      - name: municipal_tax

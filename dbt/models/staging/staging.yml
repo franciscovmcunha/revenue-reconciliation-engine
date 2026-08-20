@@ -22,17 +22,14 @@ models:
   - name: stg_card_terminal
     description: >
       Card terminal (TPA) bronze rows, extracted via Azure AI Document
-      Intelligence, typed and renamed onto the canonical field set.
+      Intelligence (prebuilt-read + regex — see docs/decisions/0002), typed
+      and renamed onto the canonical field set.
     columns:
       - name: amount
         tests: [not_null]
       - name: extraction_confidence
-        tests: [not_null]
-
-  - name: stg_municipal_tax
-    description: >
-      Municipal tourist tax (TTM) bronze rows — period rollups, not
-      individual transactions. Extracted via Azure AI Document Intelligence.
-    columns:
-      - name: amount
-        tests: [not_null]
+        description: >
+          Always null for this source — prebuilt-read gives no per-field
+          confidence score. Validity here comes from the slip's own
+          arithmetic (Pagamento - Devolução = Saldo) in validator.py, not
+          from this column. No not_null test on purpose.

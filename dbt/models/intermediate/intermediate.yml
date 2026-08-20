@@ -10,6 +10,6 @@ models:
   - name: int_reconciliation
     description: >
       Applies the matching keys and tolerance from docs/reconciliation_rules.md
-      across all four sources. The `reconciliation_tolerance` var (defined in
+      across all three sources. The `reconciliation_tolerance` var (defined in
       dbt_project.yml) is the single source of truth for the amount-comparison
       tolerance — see docs/reconciliation_rules.md, "Tolerance, not exactness".
