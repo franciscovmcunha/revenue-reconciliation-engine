@@ -24,10 +24,11 @@ def validate_pms_rows(parsed: pd.DataFrame) -> ValidationResult:
             "missing_document_number"
         )
 
-    rejected = missing_document_number 
-    
+    for idx in parsed.index[missing_document_number]:
+        reasons[idx] = "missing_document_number"
+
     return ValidationResult(
-        valid_rows=parsed[~rejected].copy(),
-        rejected_rows=parsed[rejected].copy(),
-        rejection_reasons=reasons.copy(),
+        valid_rows=parsed[~missing_document_number].copy(),
+        rejected_rows=parsed[missing_document_number].copy(),
+        rejection_reasons=reasons,
     )

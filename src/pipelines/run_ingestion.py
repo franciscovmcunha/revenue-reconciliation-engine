@@ -11,7 +11,7 @@ from src.ingestion.card_terminal import pipeline as card_terminal
 
 def main() -> None:
     run_id = str(uuid.uuid4())
-    pms.run(str(PMS), run_id)
+    pms.run(run_id)
     for workbook in sorted(CASH_REGISTER.glob("*.xlsx")):
         cash_register.run(str(workbook), run_id)
     card_terminal.run(str(CARD_TERMINAL), run_id)

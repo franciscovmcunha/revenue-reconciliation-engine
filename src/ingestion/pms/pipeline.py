@@ -11,7 +11,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def run(file_path: str, ingestion_run_id: str) -> None:
+def run(ingestion_run_id: str) -> None:
     raw = read_pms_export()
     parsed = parse_pms_rows(raw)
     result = validate_pms_rows(parsed)
