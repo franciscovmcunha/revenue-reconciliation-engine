@@ -57,7 +57,7 @@ def _extract_abanca_rows(
         {
             "transaction_date": match.group("date"),
             "amount": match.group("pay_total"),
-            "refund_amount": "0",
+            "refund_amount": "0,00",
             "saldo_amount": match.group("saldo_total"),
             "extraction_confidence": None,
             "source_file": file_path,

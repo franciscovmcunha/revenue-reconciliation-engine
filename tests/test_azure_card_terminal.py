@@ -11,7 +11,7 @@ CARD_TERMINAL_MODEL_ID)
 #         AZURE CARD TERMINAL TEST
 #------------------------------------------
 
-@pytest.mark.integration
+@pytest.mark.azure
 def test_abanca_ocr_text():
     client = DocumentIntelligenceClient(endpoint=AZURE_DOCUMENT_ENDPOINT, api_key=AZURE_DOCUMENT_KEY)
     result = client.analyze_document(
