@@ -5,9 +5,6 @@ from src.common.normalization import normalize_date
 #                PMS PARSER
 #------------------------------------------
 
-# 1:1 rename onto bronze.pms's existing columns — every raw column is kept,
-# none dropped. Business rules (cancellations, canonical field selection)
-# belong in dbt staging, not here — docs/decisions/0001-preserve-raw-before-normalizing.md
 BRONZE_COLUMNS = {
     "Avançado": "is_advanced",
     "Cancelado": "is_cancelled",
@@ -44,9 +41,6 @@ BRONZE_COLUMNS = {
 
 
 def _parse_raw_amount(raw_amounts: pd.Series) -> pd.Series:
-    # only strips the thousands separator so Postgres can store a real
-    # double precision value — no abs(), no business rule, sign stays
-    # exactly as the source had it
     cleaned = raw_amounts.astype(str).str.replace(",", "", regex=False)
     return pd.to_numeric(cleaned, errors="coerce")
 
