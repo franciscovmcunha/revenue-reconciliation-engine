@@ -6,3 +6,10 @@ requires-python = ">=3.11"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["src*"]
+
+[tool.pytest.ini_options]
+markers = [
+    "integration: tests that use real external files or infrastructure",
+    "azure: tests that call Azure Document Intelligence",
+    "excel: tests that use real Excel workbooks",
+]

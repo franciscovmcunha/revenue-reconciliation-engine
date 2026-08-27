@@ -25,6 +25,11 @@ PMS = RAW_DATA / "pms"
 AZURE_DOCUMENT_ENDPOINT = os.getenv("AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT")
 AZURE_DOCUMENT_KEY = os.getenv("AZURE_DOCUMENT_INTELLIGENCE_KEY")
 
+if AZURE_DOCUMENT_KEY  is None:
+    raise RuntimeError(
+        "AZURE_API_KEY environment variable is not configured"
+    )
+
 #------------------------------------------
 #                POSTGRESQL
 #------------------------------------------
@@ -34,3 +39,8 @@ DB_PORT = os.getenv("POSTGRES_PORT")
 DB_NAME = os.getenv("POSTGRES_DB")
 DB_USER = os.getenv("POSTGRES_USER")
 DB_PASSWORD = os.getenv("POSTGRES_PASSWORD")
+
+if DB_PASSWORD  is None:
+    raise RuntimeError(
+        "DB_PASSWORD environment variable is not configured"
+    )
