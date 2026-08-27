@@ -69,58 +69,49 @@ def test_paybyrd_regex_finds_multiple_slips():
 
 def test_abanca_regex_finds_one_slip():
     text = """
-    PORTUGAL ON HOLIDAYS
-    ALECRIM AO CHIADO
-    Ident. TPA: 01114403
-    26-04-30 16:55:25
-    Per. 013 Tr. 007 M9951
-
+    PORTUGAL ON HOLIDAYS ALECRIM AO CHIADO Ident. TPA: 01114402
+    26-04-30 16:55:32 Per:030 Tr:004 Mg687
     TOTAIS TPA
-
     Conta396003040029633
-    COMPRA 004
-    1808,56 €
-
-    Inclui Gratificação
-    0,00 €
-
-    MC C TRAV 004
-    Valor 1808,56 €
-    Desc. 33,45 €
+    COMPRA
+    002
+    1049,30 €
+    MC C TRAV
+    002
+    Valor
+    1049,30+ €
+    Desc. :
+    19,41+ €
     TOTAL A MOVIMENTAR
-    1775,11 €
-
+    1029,89+ €
     TPA DESATIVADO
     """
 
     matches = list(_ABANCA_SLIP.finditer(text))
 
     assert len(matches) == 1
-    assert matches[0].group("terminal_id") == "01114403"
+    assert matches[0].group("terminal_id") == "01114402"
     assert matches[0].group("date") == "26-04-30"
-    assert matches[0].group("pay_total") == "1808,56"
-    assert matches[0].group("saldo_total") == "1775,11"
+    assert matches[0].group("pay_total") == "1049,30"
+    assert matches[0].group("saldo_total") == "1029,89"
 
 def test_abanca_regex_parses_second_terminal():
     text = """
-    PORTUGAL ON HOLIDAYS
-    ALECRIM AO CHIADO
-    Ident. TPA: 01114402
-    26-04-30 16:55:32
-    Per. 030 Tr. 004 M6687
-
+    PORTUGAL ON HOLIDAYS ALECRIM AO CHIADO Ident. TPA: 01114402
+    26-04-30 16:55:32 Per:030 Tr:004 Mg687
     TOTAIS TPA
-
     Conta396003040029633
-    COMPRA 002
+    COMPRA
+    002
     1049,30 €
-
-    MC C TRAV 002
-    Valor 1049,30 €
-    Desc. 19,41 €
+    MC C TRAV
+    002
+    Valor
+    1049,30+ €
+    Desc. :
+    19,41+ €
     TOTAL A MOVIMENTAR
-    1029,89 €
-
+    1029,89+ €
     TPA DESATIVADO
     """
 
@@ -133,30 +124,38 @@ def test_abanca_regex_parses_second_terminal():
 
 def test_abanca_regex_finds_multiple_slips():
     text = """
-    PORTUGAL ON HOLIDAYS
-    ALECRIM AO CHIADO
-    Ident. TPA: 01114403
-    26-04-30 16:55:25
+    PORTUGAL ON HOLIDAYS ALECRIM AO CHIADO Ident. TPA: 01114403
+    26-04-30 16:55:14 Per:029 Tr:003 Mg686
     TOTAIS TPA
-    COMPRA 004
-    1808,56 €
-    MC C TRAV 004
-    Valor 1808,56 €
-    Desc. 33,45 €
-    TOTAL A MOVIMENTAR 1775,11 €
+    Conta396043440029633
+    COMPRA
+    003
+    2049,30 €
+    MC C TRAV
+    002
+    Valor
+    2049,30+ €
+    Desc. :
+    29,41+ €
+    TOTAL A MOVIMENTAR
+    2029,89+ €
     TPA DESATIVADO
 
-    PORTUGAL ON HOLIDAYS
-    ALECRIM AO CHIADO
-    Ident. TPA: 01114402
-    26-04-30 16:55:32
+    PORTUGAL ON HOLIDAYS ALECRIM AO CHIADO Ident. TPA: 01114402
+    26-04-30 16:55:32 Per:030 Tr:004 Mg687
     TOTAIS TPA
-    COMPRA 002
+    Conta396003040029633
+    COMPRA
+    002
     1049,30 €
-    MC C TRAV 002
-    Valor 1049,30 €
-    Desc. 19,41 €
-    TOTAL A MOVIMENTAR 1029,89 €
+    MC C TRAV
+    002
+    Valor
+    1049,30+ €
+    Desc. :
+    19,41+ €
+    TOTAL A MOVIMENTAR
+    1029,89+ €
     TPA DESATIVADO
     """
 
@@ -180,15 +179,21 @@ def test_mixed_page_finds_paybyrd_and_abanca():
     Saldo
     Valor total 1 563,85 €
 
-    Ident. TPA: 01114403
-    26-04-22 13:21:58
+    PORTUGAL ON HOLIDAYS ALECRIM AO CHIADO Ident. TPA: 01114402
+    26-04-30 16:55:32 Per:030 Tr:004 Mg687
     TOTAIS TPA
-    COMPRA 003
-    1459,04 €
-    MC C TRAV 002
-    Valor 1427,04 €
-    Desc. 26,40 €
-    TOTAL A MOVIMENTAR 1432,05 €
+    Conta396003040029633
+    COMPRA
+    002
+    1049,30 €
+    MC C TRAV
+    002
+    Valor
+    1049,30+ €
+    Desc. :
+    19,41+ €
+    TOTAL A MOVIMENTAR
+    1029,89+ €
     TPA DESATIVADO
     """
 

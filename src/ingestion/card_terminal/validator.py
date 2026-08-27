@@ -17,8 +17,6 @@ LOW_CONFIDENCE_THRESHOLD = 0.01
 
 
 def _parse_slip_amount(raw: pd.Series) -> pd.Series:
-    # this source's format is "2 326,15" — space as thousands, comma as
-    # decimal — the reverse convention from the PMS export
     cleaned = raw.astype(str).str.replace(" ", "", regex=False).str.replace(",", ".", regex=False)
     return pd.to_numeric(cleaned, errors="coerce")
 
