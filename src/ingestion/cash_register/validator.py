@@ -10,7 +10,7 @@ from dataclasses import dataclass
 class ValidationResult:
     valid_rows: pd.DataFrame
     rejected_rows: pd.DataFrame
-    rejection_reasons: dict[int, str]
+    rejection_reasons: dict[int, list[str]]
 
 
 def validate_cash_register_rows(parsed: pd.DataFrame) -> ValidationResult:

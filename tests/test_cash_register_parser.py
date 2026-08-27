@@ -1,9 +1,23 @@
 import pandas as pd
+from src.ingestion.cash_register.reader import read_cash_register_workbook
 from src.ingestion.cash_register.parser import parse_cash_register_rows
+import pytest
 
 #------------------------------------------
 #             CASH REGISTER TESTS
 #------------------------------------------
+
+@pytest.mark.excel
+def test_real_excel_spreadsheet():
+    workbook = read_cash_register_workbook(
+        "/Users/vitormoraespc/Developer/revenue-reconciliation-engine/data/raw/cash_register/Folha de Caixa Diaria - Janeiro.xlsx"
+    )
+    print(workbook.keys())
+
+    for sheet_name, sheet in workbook.items():
+        print(f"\n--- SHEET: {sheet_name} ---")
+        print(sheet.head(15))
+
 
 
 def _fake_sheet(day=4, month=5, transaction_rows=None):
@@ -13,7 +27,7 @@ def _fake_sheet(day=4, month=5, transaction_rows=None):
         [None, "Data", pd.Timestamp(2026, month, day), None, None, None, None, None],
         [None, None, None, None, None, None, None, None],
         [None, "Tipo", "Descrição / Fornecedor", "Documento / Nº Factura",
-         "Data do \nDocumento", "Valor do \nDocumento", "CRÉDITO", "DÉBITO"],  # 8 columns — CRÉDITO and DÉBITO both real
+         "Data do \nDocumento", "Valor do \nDocumento", "CRÉDITO", "DÉBITO"],  
     ]
     rows.extend(transaction_rows)
     rows.append([None, None, None, None, None, "Saldo inicial", "Saldo final", None])
@@ -28,7 +42,7 @@ def test_excludes_summary_rows():
     assert result.iloc[0]["amount"] == 48.0
 
 
-def test_handles_header_drift_between_periods():
+def test_excludes_sheet_from_unexpected_month():
     transaction = [None, "Fundo de caixa", "Estadia", None, None, None, 100, None]
     sheet = _fake_sheet(day=1, month=3, transaction_rows=[transaction])
     result = parse_cash_register_rows({"1": sheet}, expected_month=5)

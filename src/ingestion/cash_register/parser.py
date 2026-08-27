@@ -10,10 +10,6 @@ TTM_GUEST_PAYMENT = re.compile(r"ttm", re.IGNORECASE)
 TTM_INTERNAL_TRANSFER = re.compile(r"reforço|desde ttm", re.IGNORECASE)
 INTER_PROPERTY_MARKER = re.compile(r"alfama", re.IGNORECASE)
 
-# selected by name, not by position — some sheets (confirmed in the real
-# Março workbook) have a stray blank header cell that pandas turns into a
-# column literally named `nan`, with a dtype that doesn't match across
-# sheets and breaks pd.concat. Selecting only these known columns drops it.
 KNOWN_COLUMNS = [
     "Tipo", "Descrição / Fornecedor", "Documento / Nº Factura",
     "Data do \nDocumento", "Valor do \nDocumento", "CRÉDITO", "DÉBITO",
@@ -36,7 +32,7 @@ def _sheet_date(sheet: pd.DataFrame):
 
 def parse_cash_register_rows(raw_sheets: dict[str, pd.DataFrame], expected_month: int) -> pd.DataFrame:
     parsed = []
-    for sheet in raw_sheets.values():  # .values() -> just the tables, sheet names not needed here
+    for sheet in raw_sheets.values(): 
         header_row = _find_header_row(sheet)
         if header_row is None:
             continue
