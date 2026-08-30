@@ -106,10 +106,45 @@ FROM bronze.card_terminal
 ORDER BY transaction_date ASC;
 
 ------------------------------------------------------------------------------
+-- 3.1 terminal_provider breakdown
+-- Objective: profile row counts and completeness per provider separately --
+-- paybyrd and abanca slips use different regexes (extractor.py) and
+-- different raw transaction_date formats (see 4 below), so a data-quality
+-- issue affecting only one provider would be invisible in a table-wide
+-- aggregate.
+------------------------------------------------------------------------------
+
+SELECT
+    terminal_provider,
+    COUNT(*) AS occurrences,
+    COUNT(*) FILTER (WHERE amount IS NULL) AS amount_null_occurrences,
+    COUNT(*) FILTER (WHERE transaction_date IS NULL) AS transaction_date_null_occurrences,
+    COUNT(*) FILTER (
+        WHERE transaction_date !~ '^\d{2}/\d{2}$'
+          AND transaction_date !~ '^\d{2}-\d{2}-\d{2}$'
+    ) AS transaction_date_unrecognized_format_occurrences
+FROM bronze.card_terminal
+GROUP BY terminal_provider
+ORDER BY terminal_provider;
+
+
+------------------------------------------------------------------------------
 -- 4. Cross-source reconciliation readiness (PMS gross_amount vs. card_terminal)
 -- Objective: compare bronze.pms's card-paid gross_amount, grouped by day,
 -- against bronze.card_terminal's amount for the same day, and quantify how
 -- many days reconcile within tolerance versus how many don't.
+--
+-- transaction_date parsing is provider-specific, confirmed against real
+-- examples in tests/test_card_terminal_extractor.py and matching
+-- dbt/models/staging/stg_card_terminal.sql:
+--   - paybyrd: "dd/mm", no year at all -- the reconciliation window is a
+--     single calendar year, so the year is filled in as a constant rather
+--     than inferred from anything in the source.
+--   - abanca: "yy-mm-dd" (year first) -- NOT day-month-year, despite the
+--     dash-separated look of a European date. Parsing this the wrong way
+--     round previously either threw (a malformed TO_DATE input) or
+--     silently misdated every abanca slip, depending on the exact values
+--     present -- this is what made the old version of this query obsolete.
 ------------------------------------------------------------------------------
 WITH pms_daily AS (
     SELECT
@@ -122,7 +157,14 @@ WITH pms_daily AS (
 ),
 card_terminal_daily AS (
     SELECT
-        TO_DATE(transaction_date || '/2026', 'DD/MM/YYYY') AS transaction_date,
+        CASE
+            WHEN transaction_date ~ '^\d{2}/\d{2}$'
+                THEN TO_DATE(transaction_date || '/2026', 'DD/MM/YYYY')
+            WHEN transaction_date ~ '^\d{2}-\d{2}-\d{2}$'
+                THEN TO_DATE(transaction_date, 'YY-MM-DD')
+            ELSE NULL
+        END AS transaction_date,
+        terminal_provider,
         amount AS terminal_amount,
         saldo_amount
     FROM bronze.card_terminal
