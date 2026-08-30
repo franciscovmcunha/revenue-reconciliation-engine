@@ -69,7 +69,7 @@ def test_paybyrd_regex_finds_multiple_slips():
 
 def test_abanca_regex_finds_one_slip():
     text = """
-    PORTUGAL ON HOLIDAYS ALECRIM AO CHIADO Ident. TPA: 01114402
+    PORTUGAL ON HOLIDAYS RIVERSIDE HOUSE Ident. TPA: 01114402
     26-04-30 16:55:32 Per:030 Tr:004 Mg687
     TOTAIS TPA
     Conta396003040029633
@@ -97,7 +97,7 @@ def test_abanca_regex_finds_one_slip():
 
 def test_abanca_regex_parses_second_terminal():
     text = """
-    PORTUGAL ON HOLIDAYS ALECRIM AO CHIADO Ident. TPA: 01114402
+    PORTUGAL ON HOLIDAYS RIVERSIDE HOUSE Ident. TPA: 01114402
     26-04-30 16:55:32 Per:030 Tr:004 Mg687
     TOTAIS TPA
     Conta396003040029633
@@ -124,7 +124,7 @@ def test_abanca_regex_parses_second_terminal():
 
 def test_abanca_regex_finds_multiple_slips():
     text = """
-    PORTUGAL ON HOLIDAYS ALECRIM AO CHIADO Ident. TPA: 01114403
+    PORTUGAL ON HOLIDAYS RIVERSIDE HOUSE Ident. TPA: 01114403
     26-04-30 16:55:14 Per:029 Tr:003 Mg686
     TOTAIS TPA
     Conta396043440029633
@@ -141,7 +141,7 @@ def test_abanca_regex_finds_multiple_slips():
     2029,89+ €
     TPA DESATIVADO
 
-    PORTUGAL ON HOLIDAYS ALECRIM AO CHIADO Ident. TPA: 01114402
+    PORTUGAL ON HOLIDAYS RIVERSIDE HOUSE Ident. TPA: 01114402
     26-04-30 16:55:32 Per:030 Tr:004 Mg687
     TOTAIS TPA
     Conta396003040029633
@@ -179,7 +179,7 @@ def test_mixed_page_finds_paybyrd_and_abanca():
     Saldo
     Valor total 1 563,85 €
 
-    PORTUGAL ON HOLIDAYS ALECRIM AO CHIADO Ident. TPA: 01114402
+    PORTUGAL ON HOLIDAYS RIVERSIDE HOUSE Ident. TPA: 01114402
     26-04-30 16:55:32 Per:030 Tr:004 Mg687
     TOTAIS TPA
     Conta396003040029633

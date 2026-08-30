@@ -12,7 +12,7 @@ intermediate and marts layers never need to know which source a row came from.
 | `currency` | string | ISO 4217 — expected to be constant in this dataset, kept explicit anyway |
 | `payment_method` | string, nullable | Cash, card network, or null where the source doesn't distinguish |
 | `is_ttm_payment` | bool | `cash_register` only — set when `Descrição` matches a guest-level TTM tag (see `reconciliation_rules.md`) |
-| `is_inter_property_deposit` | bool | `cash_register` only — set for the "TTM Alfama" exception (see `reconciliation_rules.md`) |
+| `is_inter_property_deposit` | bool | `cash_register` only — set for the sister-property TTM exception (see `reconciliation_rules.md`) |
 | `extraction_confidence` | float, nullable | See note below — no longer populated the way this was originally designed |
 | `ingestion_run_id` | string | Ties every row back to the ingestion run that produced it |
 | `raw_ref` | string | Pointer back to the bronze row this was normalized from — see `architecture.md` |

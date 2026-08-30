@@ -41,19 +41,20 @@ Matching a tagged `cash_register` TTM row against PMS:
    a card-paid PMS invoice would never be correct regardless of how close
    the amount is.
 
-### The "TTM Alfama" exception — expected, not a mismatch
+### The inter-property deposit exception — expected, not a mismatch
 
-Some tagged rows reference a different property ("TTM Alfama") and will
-never resolve against this repo's PMS export. This isn't a data error: only
-this hotel (Alecrim ao Chiado) has a safe on site, so cash TTM collected on
-behalf of a sister property with no safe of its own gets deposited into this
-till anyway, purely for physical cash-custody reasons. These rows are real
-money, correctly present in `cash_register`, but they are **not this
-property's revenue** — they must be flagged as `is_inter_property_deposit`
-and excluded from Alecrim's own PMS-vs-cash-register reconciliation, not
-reported as a missing/unmatched transaction. Whether they ever get matched
-against the other property's own PMS export is out of scope until that
-export is part of this project.
+Some tagged rows reference a different property in the group (a
+business-specific marker — see `SISTER_PROPERTY_MARKER` in
+`src/utils/config.py`) and will never resolve against this repo's PMS
+export. This isn't a data error: only this property has a safe on site, so
+cash TTM collected on behalf of a sister property with no safe of its own
+gets deposited into this till anyway, purely for physical cash-custody
+reasons. These rows are real money, correctly present in `cash_register`,
+but they are **not this property's revenue** — they must be flagged as
+`is_inter_property_deposit` and excluded from this property's own
+PMS-vs-cash-register reconciliation, not reported as a missing/unmatched
+transaction. Whether they ever get matched against the other property's
+own PMS export is out of scope until that export is part of this project.
 
 ## Tolerance, not exactness
 

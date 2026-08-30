@@ -47,7 +47,7 @@ the hotel's own operational knowledge of how TTM is actually handled:
   separately extractable line anywhere. Only 15 of 618 real PMS invoices in
   this dataset are cash at all — the rest of TTM is genuinely invisible as
   a separate figure, and this project doesn't invent one.
-- **The "TTM Alfama" rows**: a real, expected exception, not a data error —
+- **The inter-property deposit rows**: a real, expected exception, not a data error —
   only this property has a safe on-site, so a sister property's cash TTM
   gets deposited here for physical cash-custody reasons and belongs to a
   PMS export this repo doesn't have. See `reconciliation_rules.md`.

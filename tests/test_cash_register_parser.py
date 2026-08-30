@@ -64,8 +64,12 @@ def test_reforco_transfer_is_not_tagged_as_ttm_payment():
     assert result.iloc[0]["is_ttm_payment"] == False
 
 
-def test_alfama_ttm_is_flagged_as_inter_property():
-    transaction = [None, "Fundo de caixa", "TTM Alfama", "129/FCTAYH26", None, None, 32, None]
+def test_sister_property_ttm_is_flagged_as_inter_property():
+    # "sister-property" matches the default SISTER_PROPERTY_MARKER
+    # (src/utils/config.py) -- a real deployment sets that env var to the
+    # actual sister property's name; see docs/reconciliation_rules.md,
+    # "The inter-property deposit exception".
+    transaction = [None, "Fundo de caixa", "TTM sister-property", "129/FCTAYH26", None, None, 32, None]
     sheet = _fake_sheet(transaction_rows=[transaction])
     result = parse_cash_register_rows({"8": sheet}, expected_month=5)
     assert result.iloc[0]["is_ttm_payment"] == True

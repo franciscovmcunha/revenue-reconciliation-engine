@@ -44,3 +44,12 @@ if DB_PASSWORD  is None:
     raise RuntimeError(
         "DB_PASSWORD environment variable is not configured"
     )
+
+#------------------------------------------
+#         BUSINESS CONFIGURATION
+#------------------------------------------
+
+# Business-specific, not a repo-wide constant — see
+# src/ingestion/cash_register/parser.py and
+# docs/reconciliation_rules.md, "The inter-property deposit exception".
+SISTER_PROPERTY_MARKER = os.getenv("SISTER_PROPERTY_MARKER", "sister-property")

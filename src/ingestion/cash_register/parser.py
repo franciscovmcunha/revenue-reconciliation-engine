@@ -1,6 +1,7 @@
 import re
 import pandas as pd
 from src.common.normalization import normalize_amount, normalize_date
+from src.utils.config import SISTER_PROPERTY_MARKER
 
 #------------------------------------------
 #           CASH REGISTER PARSER
@@ -8,7 +9,14 @@ from src.common.normalization import normalize_amount, normalize_date
 
 TTM_GUEST_PAYMENT = re.compile(r"ttm", re.IGNORECASE)
 TTM_INTERNAL_TRANSFER = re.compile(r"reforço|desde ttm", re.IGNORECASE)
-INTER_PROPERTY_MARKER = re.compile(r"alfama", re.IGNORECASE)
+
+# The sister property's name is business-specific, not a repo-wide
+# constant — see src/utils/config.py and docs/reconciliation_rules.md,
+# "The inter-property deposit exception". The default ("sister-property")
+# will simply never match anything in a real "Descrição / Fornecedor"
+# value, which is the correct behavior for a public repo until this is
+# configured for a real deployment.
+INTER_PROPERTY_MARKER = re.compile(SISTER_PROPERTY_MARKER, re.IGNORECASE)
 
 KNOWN_COLUMNS = [
     "Tipo", "Descrição / Fornecedor", "Documento / Nº Factura",
