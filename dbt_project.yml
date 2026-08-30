@@ -1,6 +1,6 @@
-# name: reconciliation
-# version: "1.0"
-# config-version: 2
+name: reconciliation
+version: "1.0"
+config-version: 2
 
 profile: reconciliation
 
@@ -34,3 +34,9 @@ vars:
   # Single source of truth for the amount-comparison tolerance — see
   # docs/reconciliation_rules.md, "Tolerance, not exactness".
   reconciliation_tolerance: 0.05
+
+  # Card terminal slips only carry a partial date (paybyrd: day/month, no
+  # year at all). This dataset covers one calendar year, so the missing
+  # year is filled in from this var rather than guessed per row -- see
+  # stg_card_terminal.sql.
+  reconciliation_year: 2026
