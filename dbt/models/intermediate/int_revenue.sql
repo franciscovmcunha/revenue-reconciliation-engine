@@ -1,7 +1,9 @@
--- Unions stg_pms, stg_cash_register, stg_card_terminal onto one comparable
--- shape, tagged by source_system. Municipal tax isn't a fourth staging
--- model — it's the is_ttm_payment/is_inter_property_deposit flags already
--- on stg_cash_register rows (see docs/source_system_analysis.md).
--- TODO: implement
+-- Union of all three staging models onto one comparable shape
+-- (docs/data_dictionary.md's canonical fields). Every downstream model
+-- reads this instead of the individual stg_ models.
 
-select 1 as placeholder
+select * from {{ ref('stg_pms') }}
+union all
+select * from {{ ref('stg_cash_register') }}
+union all
+select * from {{ ref('stg_card_terminal') }}

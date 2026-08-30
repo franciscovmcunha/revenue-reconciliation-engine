@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: int_revenue
-    description: Union of all four staging models onto one comparable shape.
+    description: Union of all three staging models onto one comparable shape.
   - name: int_card_payments
     description: Card terminal transactions, ready to match against PMS.
   - name: int_cash_payments

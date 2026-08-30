@@ -1,4 +1,5 @@
--- Card terminal transactions from int_revenue, ready to match against PMS.
--- TODO: implement
+-- Card terminal transactions, ready to match against PMS.
 
-select 1 as placeholder
+select *
+from {{ ref('int_revenue') }}
+where source_system = 'card_terminal'
