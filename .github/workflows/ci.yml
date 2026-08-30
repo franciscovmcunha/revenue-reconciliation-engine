@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: reconciliation
+          POSTGRES_PASSWORD: reconciliation
+          POSTGRES_DB: reconciliation_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U reconciliation"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Python tests
+        # excel/azure/integration-marked tests need real local files or a
+        # live Azure endpoint, neither available here -- see pyproject.toml.
+        # Dummy credentials below satisfy src/utils/config.py's import-time
+        # checks (it fails fast if these are unset) -- collection imports
+        # every test module regardless of which markers get deselected.
+        run: python -m pytest tests/ -v
+        env:
+          AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT: "https://ci-placeholder.example.com"
+          AZURE_DOCUMENT_INTELLIGENCE_KEY: "ci-placeholder"
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: "5432"
+          POSTGRES_DB: reconciliation_ci
+          POSTGRES_USER: reconciliation
+          POSTGRES_PASSWORD: reconciliation
+
+      - name: Load synthetic bronze fixture
+        run: |
+          PGPASSWORD=reconciliation psql -h localhost -U reconciliation -d reconciliation_ci \
+            -f scripts/ci_bronze_fixture.sql
+
+      - name: Write CI dbt profile
+        run: |
+          mkdir -p dbt
+          cat > dbt/profiles.yml <<'EOF'
+          reconciliation:
+            target: ci
+            outputs:
+              ci:
+                type: postgres
+                host: localhost
+                port: 5432
+                user: reconciliation
+                password: reconciliation
+                dbname: reconciliation_ci
+                schema: raw
+                threads: 4
+          EOF
+
+      - name: dbt build
+        run: dbt build --target ci
+        env:
+          DBT_PROFILES_DIR: dbt
