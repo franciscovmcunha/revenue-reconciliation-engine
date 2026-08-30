@@ -10,10 +10,10 @@
 -- DATABASE SAMPLE
 ------------------------------------------------------------------------------
 
-SELECT *
-FROM bronze.cash_register
+SELECT DISTINCT *
+FROM bronze.card_terminal
 LIMIT 10;
-
+	
 
 ------------------------------------------------------------------------------
 -- 1. Day coverage per monthly file
@@ -709,7 +709,8 @@ LEFT JOIN actual_columns a
 
 WHERE a.column_name IS NULL;
 
-
+SELECT 
+ABS(800-900)
 ------------------------------------------------------------------------------
 -- 9. Core classification distribution
 -- Objective:

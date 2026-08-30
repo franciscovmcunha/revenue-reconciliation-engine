@@ -8,7 +8,7 @@
 -- DATABASE SAMPLE
 ------------------------------------------------------------------------------
 
-SELECT * 
+SELECT *
 FROM bronze.pms
 LIMIT 10
 
@@ -19,9 +19,8 @@ LIMIT 10
 SELECT column_name
 FROM information_schema.columns
 WHERE table_schema = 'bronze'
-  AND table_name = 'pms'
-ORDER BY ordinal_position;
-
+	AND table_name = 'pms'
+ORDER BY ordinal_position
 ------------------------------------------------------------------------------
 -- 2. payment_method distribution
 -- Objective: enumerate every distinct payment_method value and its count

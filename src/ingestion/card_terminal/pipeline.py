@@ -15,29 +15,43 @@ logger = logging.getLogger(__name__)
 #         CARD TERMINAL PIPELINE
 # ------------------------------------------
 
-def run(
-    receipts_directory: str,
-    ingestion_run_id: str,
-) -> None:
+def run(receipts_directory: str, ingestion_run_id: str) -> None:
+    files = list(list_pending_receipts(receipts_directory))
     rows = []
 
-    for file_path in list_pending_receipts(receipts_directory):
+    total = len(files)
+
+    logger.info("card_terminal: %d files found", total)
+
+    for position, file_path in enumerate(files, start=1):
+        logger.info(
+            "card_terminal: processing %d/%d - %s",
+            position,
+            total,
+            file_path,
+        )
+
         try:
             df = extract_card_terminal_rows(file_path)
             rows.append(df)
 
-        except RuntimeError:
-            logger.exception(
-                "Card terminal extraction failed for file: %s",
+            logger.info(
+                "card_terminal: completed %d/%d - %s",
+                position,
+                total,
                 file_path,
             )
-            continue
+
+        except RuntimeError:
+            logger.exception(
+                "card_terminal: failed %d/%d - %s",
+                position,
+                total,
+                file_path,
+            )
 
     extracted = (
-        pd.concat(
-            rows,
-            ignore_index=True,
-        )
+        pd.concat(rows, ignore_index=True)
         if rows
         else pd.DataFrame()
     )

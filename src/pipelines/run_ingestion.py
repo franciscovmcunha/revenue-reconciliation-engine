@@ -3,6 +3,7 @@ from src.utils.config import CASH_REGISTER, CARD_TERMINAL, PMS
 from src.ingestion.pms import pipeline as pms
 from src.ingestion.cash_register import pipeline as cash_register
 from src.ingestion.card_terminal import pipeline as card_terminal
+import logging
 
 #------------------------------------------
 #              RUN INGESTION
@@ -18,4 +19,9 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+    )
+
     main()
