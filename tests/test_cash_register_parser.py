@@ -10,7 +10,7 @@ import pytest
 @pytest.mark.excel
 def test_real_excel_spreadsheet():
     workbook = read_cash_register_workbook(
-        "/Users/vitormoraespc/Developer/revenue-reconciliation-engine/data/raw/cash_register/Folha de Caixa Diaria - Janeiro.xlsx"
+        "data/raw/cash_register/Folha de Caixa Diaria - Janeiro.xlsx"
     )
     print(workbook.keys())
 

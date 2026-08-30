@@ -13,3 +13,8 @@ markers = [
     "azure: tests that call Azure Document Intelligence",
     "excel: tests that use real Excel workbooks",
 ]
+# Default `pytest` runs only the fast, pure-logic tests. Tests marked
+# integration/azure/excel need real local data or a live Azure endpoint,
+# neither of which exist in CI or on a fresh clone -- opt in explicitly
+# with `pytest -m excel`, `-m azure`, etc.
+addopts = "-m \"not integration and not azure and not excel\""
