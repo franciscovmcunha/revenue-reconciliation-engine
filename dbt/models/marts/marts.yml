@@ -8,10 +8,14 @@ models:
       One row per comparison outcome (matched/mismatch/missing) — the primary
       table this whole project produces. See docs/reconciliation_rules.md.
     columns:
+      - name: reconciliation_id
+        tests: [unique, not_null]
       - name: outcome
         tests:
+          - not_null
           - accepted_values:
-              values: ["matched", "mismatch", "missing"]
+              arguments:
+                values: ["matched", "mismatch", "missing"]
   - name: fact_payment_exceptions
     description: Mismatches only, with both sides' values side by side for review.
   - name: fact_missing_transactions
