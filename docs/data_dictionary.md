@@ -7,7 +7,7 @@ intermediate and marts layers never need to know which source a row came from.
 |---|---|---|
 | `source_system` | string | `pms` \| `cash_register` \| `card_terminal` — see note below on municipal tax |
 | `transaction_date` | date | Normalized to ISO 8601 regardless of source format |
-| `transaction_ref` | string, nullable | Present for PMS; present for card terminal only where the slip's `Documento/Nº Factura` was filled in; absent for cash register |
+| `transaction_ref` | string, nullable | Present for PMS; present for `cash_register` where the row's `Documento / Nº Factura` is filled in (chiefly tagged TTM rows, see `reconciliation_rules.md`); currently always null for card terminal, since neither slip format's extractor captures an invoice/document reference yet |
 | `amount` | numeric(12,2) | Always positive; direction is implied by `source_system`, never by sign |
 | `currency` | string | ISO 4217 — expected to be constant in this dataset, kept explicit anyway |
 | `payment_method` | string, nullable | Cash, card network, or null where the source doesn't distinguish |
