@@ -11,9 +11,9 @@
 ------------------------------------------------------------------------------
 
 SELECT DISTINCT *
-FROM bronze.card_terminal
+FROM bronze.cash_register
 LIMIT 10;
-	
+
 
 ------------------------------------------------------------------------------
 -- 1. Day coverage per monthly file
@@ -487,6 +487,11 @@ ORDER BY transaction_date;
 -- persisted in bronze.cash_register.
 ------------------------------------------------------------------------------
 
+-- "DÉBITO" lands as text (unlike "CRÉDITO", bigint) -- cast before
+-- COALESCE or SUM raises "COALESCE types text and integer cannot be
+-- matched". Every value observed is a plain numeric string, so a direct
+-- cast is safe; if that ever stops being true this query is exactly where
+-- it should fail loudly.
 SELECT
     sheet_date::date AS sheet_date,
     till_category,
@@ -496,13 +501,13 @@ SELECT
     ) AS total_credit,
 
     SUM(
-        COALESCE("DÉBITO", 0)
+        COALESCE("DÉBITO"::numeric, 0)
     ) AS total_debit,
 
     SUM(
         COALESCE("CRÉDITO", 0)
         -
-        COALESCE("DÉBITO", 0)
+        COALESCE("DÉBITO"::numeric, 0)
     ) AS net_movement
 
 FROM bronze.cash_register
@@ -709,8 +714,7 @@ LEFT JOIN actual_columns a
 
 WHERE a.column_name IS NULL;
 
-SELECT 
-ABS(800-900)
+
 ------------------------------------------------------------------------------
 -- 9. Core classification distribution
 -- Objective:
